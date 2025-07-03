@@ -1,23 +1,20 @@
-name: Windows RDP via Ngrok
+name: RDP via Ngrok
 
-on: [workflow_dispatch]
+on: [push]
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - name: Set up job
-      run: echo "Starting RDP setup..."
+    - name: Download Ngrok
+      run: Invoke-WebRequest -Uri "https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-windows-amd64.zip" -OutFile "ngrok.zip"
 
-    - name: Install Ngrok
-      run: |
-        Invoke-WebRequest -Uri https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
-        Expand-Archive ngrok.zip -DestinationPath $env:USERPROFILE
-        Remove-Item ngrok.zip
+    - name: Extract Ngrok
+      run: Expand-Archive ngrok.zip -DestinationPath .
 
     - name: Auth Ngrok
-      run: .\ngrok\ngrok.exe authtoken 2zN1xajYOHK6p8yjfrtXmjdsgNM_2CxZMocZaW3n8tZXFe3wJ
+      run: .\ngrok.exe authtoken 2zN1xajYOHK6p8yjfrtXmjdsgNM_2CxZMocZaW3n8tZXFe3wJ
 
     - name: Enable RDP + Start Tunnel
       run: |
@@ -25,15 +22,13 @@ jobs:
         net localgroup administrators DevUser /add
         reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-        Start-Process -NoNewWindow -FilePath "$env:USERPROFILE\ngrok\ngrok.exe" `
-          -ArgumentList "tcp 3389" `
-          -RedirectStandardOutput "$env:USERPROFILE\ngrok.log"
+        Start-Process -NoNewWindow -FilePath ".\ngrok.exe" -ArgumentList "tcp 3389" -RedirectStandardOutput "$env:USERPROFILE\ngrok.log"
 
     - name: Show RDP Login Info
       run: |
-        echo "🔐 Username: DevUser"
-        echo "🔐 Password: Cpl@x_82Yw9!"
-        echo "⏳ Wait 30 seconds then read Ngrok log below..."
+        echo 🔐 Username: DevUser
+        echo 🔑 Password: Cpl@x_82Yw9!
+        echo ⏳ Wait 30 seconds then read Ngrok log below...
 
     - name: Show Ngrok TCP Address
       run: Get-Content "$env:USERPROFILE\ngrok.log"
