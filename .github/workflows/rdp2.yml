@@ -18,17 +18,22 @@ jobs:
     - name: Auth Ngrok
       run: |
         & $env:USERPROFILE\ngrok\ngrok.exe authtoken 2zMyq60KTSaDFozzkeM8UzD1EFv_4cus26rsct1K5QmLxvSdH
-
     - name: Enable RDP + Start Tunnel
       run: |
         net user DevUser Cpl@x_82Yw9! /add
         net localgroup administrators DevUser /add
         reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-        Start-Process -NoNewWindow -FilePath "$env:USERPROFILE\ngrok\ngrok.exe" -ArgumentList "tcp 3389"
+        Start-Process -NoNewWindow -FilePath "$env:USERPROFILE\ngrok\ngrok.exe" `
+          -ArgumentList "tcp 3389" `
+          -RedirectStandardOutput "$env:USERPROFILE\ngrok.log"
 
-    - name: Show RDP Login
+    - name: Show RDP Login Info
       run: |
         echo "🔑 Username: DevUser"
         echo "🔑 Password: Cpl@x_82Yw9!"
-        echo "⌛ Wait 30 seconds then check logs for the ngrok address..."
+        echo "⌛ Wait 30 seconds then read Ngrok log below..."
+
+    - name: Show Ngrok TCP Address
+      run: |
+        Get-Content "$env:USERPROFILE\ngrok.log"
