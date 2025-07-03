@@ -17,18 +17,18 @@ jobs:
 
     - name: Auth Ngrok
       run: |
-        & $env:USERPROFILE\ngrok\ngrok.exe authtoken 2zMyq60KTSaDFozzkeM8UzD1EFv_4cus26rsct1K5QmLxvSdH
+        & $env:USERPROFILE\ngrok\ngrok.exe authtoken YOUR_NGROK_AUTH_TOKEN
 
     - name: Enable RDP + Start Tunnel
       run: |
-        net user Abdo Abdo@2025X! /add
-        net localgroup administrators Abdo /add
+        net user DevUser Cpl@x_82Yw9! /add
+        net localgroup administrators DevUser /add
         reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
         Start-Process -NoNewWindow -FilePath "$env:USERPROFILE\ngrok\ngrok.exe" -ArgumentList "tcp 3389"
 
     - name: Show RDP Login
       run: |
-        echo "🔑 Username: Abdo"
-        echo "🔑 Password: Abdo@2025X!"
+        echo "🔑 Username: DevUser"
+        echo "🔑 Password: Cpl@x_82Yw9!"
         echo "⌛ Wait 30 seconds then check logs for the ngrok address..."
