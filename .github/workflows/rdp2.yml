@@ -17,7 +17,7 @@ jobs:
         Remove-Item ngrok.zip
 
     - name: Auth Ngrok
-      run: .\ngrok\ngrok.exe authtoken YOUR_NGROK_AUTH_TOKEN
+      run: .\ngrok\ngrok.exe authtoken 2zN1xajYOHK6p8yjfrtXmjdsgNM_2CxZMocZaW3n8tZXFe3wJ
 
     - name: Enable RDP + Start Tunnel
       run: |
