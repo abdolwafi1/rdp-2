@@ -17,7 +17,7 @@ jobs:
 
     - name: Auth Ngrok
       run: |
-        & $env:USERPROFILE\ngrok\ngrok.exe authtoken YOUR_NGROK_AUTH_TOKEN
+        & $env:USERPROFILE\ngrok\ngrok.exe authtoken 2zKMuIv9QHKXmwFuIJQCe6uf66z_Cvoyma7EMxPhsGEHPEqS
 
     - name: Enable RDP + Start Tunnel
       run: |
