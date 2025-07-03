@@ -1,0 +1,34 @@
+name: RDP Free - Windows Server
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 360
+
+    steps:
+    - name: Install Ngrok
+      run: |
+        Invoke-WebRequest -Uri "https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-windows-amd64.zip" -OutFile "ngrok.zip"
+        Expand-Archive -Path "ngrok.zip" -DestinationPath "$env:USERPROFILE\ngrok"
+        $env:Path += ";$env:USERPROFILE\ngrok"
+
+    - name: Auth Ngrok
+      run: |
+        & $env:USERPROFILE\ngrok\ngrok.exe authtoken 2zKMuIv9QHKXmwFuIJQCe6uf66z_Cvoyma7EMxPhsGEHPEqS
+
+    - name: Enable RDP + Start Tunnel
+      run: |
+        net user Abdo 123456 /add
+        net localgroup administrators Abdo /add
+        reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+        Start-Process -NoNewWindow -FilePath "$env:USERPROFILE\ngrok\ngrok.exe" -ArgumentList "tcp 3389"
+
+    - name: Show RDP Login
+      run: |
+        echo "🔑 Username: Abdo"
+        echo "🔑 Password: 123456"
+        echo "⌛ Wait 30 seconds then check logs for the ngrok address..."
